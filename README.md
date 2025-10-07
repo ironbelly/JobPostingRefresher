@@ -1,293 +1,248 @@
-# JobPostingRefresher
+# JobRefresher v6.0
 
-**A sophisticated AI framework for analyzing and optimizing job postings based on performance metrics (KPIs)**
+AI-Powered Job Posting Optimization System with Interactive CLI Interface
 
-## 🎯 Overview
+## Overview
 
-JobPostingRefresher uses the **Performance-Driven Source Material Inventory System (PD-SMIS)** to transform underperforming job postings into high-converting recruitment content. The framework analyzes your posting's KPIs at each stage of the hiring funnel, identifies bottlenecks, and generates evidence-based improvements while maintaining 100% factual accuracy.
+JobRefresher v6.0 combines the proven PD-SMIS v5.1 optimization engine with a modern interactive command-line interface (CLUI), multi-job management, and TeamTailor API integration.
 
 ### Key Features
 
-- **🔍 KPI-Driven Optimization**: Targets specific conversion bottlenecks in your hiring funnel
-- **🛡️ 14-Layer Validation System**: Prevents hallucinations and maintains source integrity
-- **📊 Multi-Iteration Learning**: Learns from previous attempts to continuously improve
-- **🎯 LinkedIn Ad Integration**: Optimizes paid campaign performance alongside organic postings
-- **⚡ Semantic Fingerprinting**: Preserves exact meaning while improving engagement
-- **🔒 Tier-Based Precision Control**: Prevents language inflation and false claims
+- **Interactive CLUI**: Menu-driven interface for easy navigation
+- **Multi-Job Management**: Handle multiple job postings with version control
+- **TeamTailor Integration**: Automatic job import and metrics synchronization
+- **PD-SMIS v5.1 Engine**: Preserved optimization engine with 14-layer validation
+- **Batch Processing**: Optimize multiple jobs simultaneously
+- **Performance Dashboard**: Track metrics and improvements
+- **Version Comparison**: Compare different job versions
+- **Export Options**: Multiple export formats (Markdown, JSON, HTML, Text)
 
-## 🚀 Quick Start
+## Quick Start
 
-### Step 1: Prepare Your Input Data
+### Prerequisites
 
-Create a text file with your job posting data in this exact format:
+- Python 3.8 or higher
+- pip package manager
+- Git (for version control)
 
-```
-[PROJECT DESCRIPTION]
-We're building a next-generation e-commerce platform using React and Node.js.
-The platform will serve millions of users with real-time inventory management.
-[/PROJECT DESCRIPTION]
+### Installation
 
-[ORIGINAL JOB TITLE]
-Frontend Developer
-[/ORIGINAL JOB TITLE]
-
-[ORIGINAL JOB POSTING]
-We're looking for a Frontend Developer to join our team.
-Requirements:
-- 3+ years React experience
-- Familiarity with REST APIs
-- Team player
-[/ORIGINAL JOB POSTING]
-
-[ORIGINAL JOB KPIs]
-- Visit/Application Conversion: 2.1%
-- Application/Initial Screening: 45%
-- Application/Interview: 15%
-- Interview/Offer: 25%
-- Offer/Hire: 60%
-[/ORIGINAL JOB KPIs]
-
-[OPTIONAL USER FEEDBACK]
-Candidates seem confused about the role scope
-Not attracting senior developers
-[/OPTIONAL USER FEEDBACK]
+1. **Clone the repository:**
+```bash
+git clone https://github.com/yourorg/JobPostingRefresher.git
+cd JobPostingRefresher
 ```
 
-### Step 2: Run the Framework
-
-#### Option A: Using the Monolithic Version (JobEvalV5.md)
-Best for: Quick, single-run optimizations
-
-1. Copy the entire content of `JobEvalV5.md`
-2. Paste into your AI assistant (Claude, GPT-4, etc.)
-3. Paste your input data from Step 1
-4. The framework will automatically execute all phases
-
-#### Option B: Using the Modular Version (refactored/)
-Best for: Custom workflows, debugging, or incremental improvements
-
-1. Start with `refactored/orchestrator.md` as your base
-2. Load specific modules as needed:
-   ```
-   Phase 0: refactored/phases/phase_0_collection.md
-   Phase 1: refactored/phases/phase_1_extraction.md
-   Phase 2: refactored/phases/phase_2_hypothesis.md
-   [Continue through all phases...]
-   ```
-3. The modular approach allows you to:
-   - Skip phases you don't need
-   - Debug specific components
-   - Add custom enhancements
-
-### Step 3: Review the Output
-
-You'll receive:
-
-```markdown
-[OPTIMIZED JOB TITLE]
-Senior Frontend Engineer - E-Commerce Platform
-
-[OPTIMIZED JOB POSTING]
-[Full optimized posting with improvements]
-
-[SEMANTIC VALIDATION REPORT]
-✅ All facts traced to source
-✅ No tier escalations detected
-✅ Domain boundaries maintained
-✅ Adversarial validation passed
-
-[KPI IMPROVEMENT PROJECTIONS]
-Based on applied optimizations:
-- Visit/Application: +1.2% expected (2.1% → 3.3%)
-- Application/Screening: +10% expected (45% → 55%)
-- Application/Interview: +8% expected (15% → 23%)
-
-[ITERATION LEARNINGS]
-- What worked: Clarified role scope, added specific projects
-- What didn't work: N/A (first iteration)
-- Recommended next test: Emphasize growth opportunities
+2. **Create virtual environment:**
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-## 📋 Step-by-Step Process
-
-### Phase 0: Source Collection
-The framework collects all your input data and establishes the baseline.
-
-### Phase 1: Extraction & Analysis
-- Separates facts by source (role, project, company)
-- Creates semantic fingerprints for each fact
-- Assigns precision tiers (1-5) based on evidence
-
-### Phase 2: Hypothesis Generation
-- Analyzes KPI gaps to identify bottlenecks
-- Generates evidence-based improvement hypotheses
-- Prioritizes interventions by potential impact
-
-### Phase 3: Strategic Optimization
-- Designs custom interventions for your specific situation
-- No generic templates - everything is evidence-based
-- Balances multiple optimization goals
-
-### Phase 4: Content Generation
-- Creates improved content while respecting all constraints
-- Maintains source integrity and precision tiers
-- Optimizes for your specific KPI goals
-
-### Phase 4.5: Adversarial Validation
-- A "hostile auditor" agent challenges every claim
-- Hunts for semantic escalations and tier violations
-- Multiple rounds until no violations found
-
-### Phase 5: Multi-Layer Verification
-- 14 different validation checks run in parallel
-- Ensures 100% source accuracy maintained
-- Validates all improvements are evidence-based
-
-### Phase 6: Learning Protocol
-- Extracts learnings for future iterations
-- Tracks what worked and what didn't
-- Builds knowledge base over time
-
-## 🔧 Advanced Usage
-
-### Multi-Iteration Optimization
-
-For best results, run multiple iterations:
-
-1. **Iteration 1**: Establish baseline and make initial improvements
-2. **Iteration 2**: Include previous results in `[OPTIONAL USER FEEDBACK]`
-3. **Iteration 3+**: Continue refining based on actual KPI changes
-
-### LinkedIn Ad Campaign Integration
-
-Include these additional sections for paid campaign optimization:
-
-```
-[AD INTRO TEXT]
-Join our innovative team building the future of e-commerce...
-[/AD INTRO TEXT]
-
-[AD AUDIENCE DETAILS]
-- Location: San Francisco Bay Area
-- Job Titles (Current/Past): Frontend Developer, React Developer
-- Skills: React, JavaScript, TypeScript
-- Years of Experience: 3-7
-- Company Size: 100-1000
-[/AD AUDIENCE DETAILS]
-
-[AD KPIs]
-- Spend: $5000
-- Impressions: 50000
-- Clicks: 500
-- Average CTR: 1.0%
-- Average CPC: $10
-- Conversion Rate: 2%
-[/AD KPIs]
+3. **Install dependencies:**
+```bash
+pip install rich prompt-toolkit requests  # Optional: pip install -r requirements.txt if available
 ```
 
-## 🏗️ Framework Architecture
-
-### Modular Structure
-```
-refactored/
-├── orchestrator.md           # Main coordination and loading sequence
-├── phases/
-│   ├── phase_0_collection.md # Input collection
-│   ├── phase_0_5_iteration.md # Learning management
-│   ├── phase_0_6_error_handling.md # Error protocols
-│   ├── phase_1_extraction.md # Semantic extraction
-│   ├── phase_2_hypothesis.md # Bottleneck analysis
-│   ├── phase_3_optimization.md # Strategy design
-│   ├── phase_4_generation.md # Content creation
-│   ├── phase_6_learning.md # Learning extraction
-│   └── phase_7_iteration.md # Iteration management
-├── validation/
-│   ├── adversarial_validation.md # Hostile checking
-│   ├── precision_tiers.md # Tier definitions
-│   ├── validation_orchestrator.md # Unified validation
-│   └── verification_suite.md # Multi-layer checks
-├── safeguards/
-│   └── critical_safeguards.md # 14 protection layers
-├── components/
-│   ├── execution_sequence.md # Pipeline logic
-│   └── output_format.md # Output structure
-└── tests/
-    └── integration_tests.py # Verification suite
+4. **Configure TeamTailor (optional):**
+```bash
+cp config/teamtailor_config.json.example user_data/config/teamtailor_config.json
+# Edit user_data/config/teamtailor_config.json with your API credentials
 ```
 
-### Core Components
+5. **Launch the application:**
+```bash
+python3 -m clui
+# Or directly: python3 clui/jbr.py
+```
 
-#### Precision Tier System
-Prevents language inflation by locking facts to evidence-supported precision levels:
-- **Tier 1**: Completion verbs (shipped, delivered, launched)
-- **Tier 2**: Creation verbs (built, created, developed)
-- **Tier 3**: Participation (worked on, contributed)
-- **Tier 4**: Association (involved with, supported)
-- **Tier 5**: Proximity (exposed to, familiar with)
+## Usage Guide
 
-#### Semantic Fingerprinting
-Creates immutable records of extracted facts to prevent semantic drift during processing.
+### Main Menu Navigation
 
-#### Adversarial Validation
-A hostile agent that assumes bad faith and hunts for violations - ensures maximum accuracy.
+When you launch JobRefresher, you'll see the main menu:
 
-## 🛡️ Safety Guarantees
+- **[1] Job Management** - Create, view, import, and search jobs
+- **[2] Job Processing** - Optimize single or multiple jobs
+- **[3] TeamTailor Integration** - Sync jobs and metrics
+- **[Q] Quit** - Exit the application
 
-The framework enforces 14 critical safeguards:
+### Creating a Job
 
-1. **Role-Project Firewall** - Prevents project features from becoming role claims
-2. **Source Attribution Check** - Every claim must trace to source material
-3. **Phrasing Pattern Validation** - Ensures appropriate language use
-4. **Evidence-Based Decisions** - All changes require supporting data
-5. **Over-Optimization Prevention** - Blocks unnecessary complexity
-6. **Engagement-Accuracy Balance** - Accuracy is non-negotiable
-7. **Tier Boundary Enforcement** - Prevents precision escalation
-8. **Adversarial Validation Gate** - Hostile validator must approve
-9. **Dual-Lock Verification** - Both systematic and adversarial checks required
-10. **Domain Boundary Enforcement** - Prevents cross-domain contamination
-11. **Semantic Diff Validation** - Ensures meaning preservation
-12. **Pipeline Enforcement** - Makes validation non-bypassable
-13. **Engagement Enhancement Boundaries** - Only safe enhancements allowed
-14. **Learning Accumulator Protection** - Preserves iteration insights
+1. Select `[1] Job Management` from main menu
+2. Choose `Create New Job`
+3. Enter job title, company name, and raw job posting content
+4. Job is saved with unique ID
 
-## 📊 Expected Results
+### Optimizing a Job
 
-Typical improvements after optimization:
+1. From Job Management, select a job
+2. Choose optimization option
+3. Watch the optimization phases progress
+4. Review validation report
+5. New optimized version is created automatically
 
-- **Visit → Application**: +30-50% conversion rate
-- **Application → Screening**: +20-40% pass rate
-- **Application → Interview**: +25-45% advancement
-- **Time to Fill**: -20-35% reduction
-- **Quality of Applicants**: Significant improvement in role-fit
+### Importing from TeamTailor
 
-## 🤝 Contributing
+1. Configure TeamTailor API credentials first (optional)
+2. From TeamTailor Integration menu
+3. Choose import option:
+   - Import specific job by ID
+   - Batch import jobs
 
-This framework is continuously improved based on real-world results. To contribute:
+### Batch Processing
 
-1. Test the framework with your job postings
-2. Document your KPI improvements
-3. Share learnings and edge cases
-4. Suggest enhancements via issues
+1. Select `[2] Job Processing` from main menu
+2. Choose `Batch Process Jobs`
+3. Select filter criteria or process all
+4. Monitor progress
+5. Review results
 
-## 📝 Important Notes
+## Architecture
 
-- **No Hallucinations**: The framework will NEVER add qualifications or claims not present in source materials
-- **Conservative Interpretation**: When ambiguous, the framework assigns the lowest applicable precision tier
-- **Evidence Required**: Every optimization must be justified by data
-- **Iterative Improvement**: Best results come from multiple iterations based on actual KPI feedback
+### Directory Structure
 
-## 🔗 Related Documentation
+```
+JobPostingRefresher/
+├── IBJobRefresher/        # v5.1 PD-SMIS engine (preserved, DO NOT MODIFY)
+├── clui/                  # Command-line UI components
+│   ├── __init__.py
+│   ├── __main__.py       # Module entry point
+│   ├── jbr.py            # Main CLUI application
+│   ├── job_manager.py    # Job data management
+│   ├── teamtailor_client.py  # TeamTailor API integration
+│   └── pd_smis_engine.py # v5.1 engine wrapper
+├── user_data/            # User data (git-ignored)
+│   ├── config/          # Configuration files
+│   └── jobs/            # Job storage
+├── tests/               # Test suite
+│   ├── unit/           # Unit tests
+│   ├── test_integration_complete.py
+│   ├── test_performance.py
+│   ├── test_regression.py
+│   ├── test_v5_preservation_final.py
+│   ├── run_ci_tests.sh
+│   └── check_coverage.sh
+├── scripts/             # Utility scripts
+│   └── check_v5_preservation.sh
+├── exports/            # Export output
+└── dev/v6/            # Development documentation
+```
 
-- `JobEvalV5.md` - Complete monolithic framework (v5.0)
-- `refactored/` - Modular framework components (v5.1)
-- `design_rationale.md` - Explains why each component exists
-- `dependency_map.yaml` - Component relationships
-- `todo.md` - Refactoring protocol and guidelines
+### Data Storage
 
-## 📧 Support
+Jobs are stored in `user_data/jobs/` with this structure:
 
-For questions, issues, or optimization assistance, please create an issue in this repository.
+```
+user_data/jobs/
+└── job_id/
+    ├── metadata.json        # Job metadata
+    ├── raw_posting.txt      # Original content
+    ├── versions/            # Version history
+    │   ├── v1.json
+    │   └── v2.json
+    └── exports/            # Exported files
+```
+
+## Configuration
+
+### TeamTailor API (Optional)
+
+Edit `user_data/config/teamtailor_config.json`:
+
+```json
+{
+  "api_key": "your-api-key-here",
+  "company_id": "your-company-id",
+  "api_version": "20210218"
+}
+```
+
+Get your API key from TeamTailor Settings > API & Webhooks.
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+python3 -m unittest discover tests/ -v
+
+# Run specific test categories
+python3 -m unittest tests.unit.test_job_manager -v        # Data layer tests
+python3 -m unittest tests.test_integration_complete -v    # Integration tests
+python3 -m unittest tests.test_performance -v             # Performance tests
+python3 -m unittest tests.test_v5_preservation_final -v   # Preservation tests
+
+# Run CI/CD test suite
+bash tests/run_ci_tests.sh
+
+# Check test coverage
+bash tests/check_coverage.sh
+```
+
+## Development
+
+### Adding New Features
+
+1. Create feature branch: `git checkout -b feature/your-feature`
+2. Implement in appropriate module (clui/*.py)
+3. Add tests in tests/
+4. Run full test suite
+5. Create pull request
+
+### Important Notes
+
+- **NEVER modify files in IBJobRefresher/** - This preserves the v5.1 engine
+- All new code goes in `clui/` directory
+- User data in `user_data/` is git-ignored
+- Run `bash scripts/check_v5_preservation.sh` regularly to verify v5.1 integrity
+
+## Troubleshooting
+
+### Common Issues
+
+**TeamTailor connection fails:**
+- Check API key in user_data/config/teamtailor_config.json
+- Verify internet connection
+- System works without TeamTailor (graceful degradation)
+
+**Optimization not available:**
+- Ensure PD-SMIS engine files exist in IBJobRefresher/
+- Check for error messages in console
+- Run preservation check: `bash scripts/check_v5_preservation.sh`
+
+**Jobs not persisting:**
+- Verify user_data/jobs/ directory exists
+- Check file permissions
+- Ensure adequate disk space
+
+**Tests failing:**
+- Ensure working directory is project root
+- Check Python version (3.8+ required)
+- Verify all dependencies installed
+
+## Support
+
+For issues, questions, or contributions:
+- GitHub Issues: [Report issues]
+- Documentation: See docs/ for detailed guides
+- Tests: See tests/ for test examples
+
+## License
+
+[Your License Here]
+
+## Credits
+
+Built on the PD-SMIS v5.1 optimization engine.
+v6.0 enhancements: Interactive CLUI, multi-job management, TeamTailor integration.
+
+## Version History
+
+- **v6.0.0** - Interactive CLUI, multi-job management, TeamTailor integration
+- **v5.1.0** - PD-SMIS optimization engine baseline
 
 ---
 
-*Built with a commitment to accuracy, evidence-based optimization, and measurable results.*
+For detailed documentation about the v5.1 engine and its optimization methodology, see `IBJobRefresher/` directory.
