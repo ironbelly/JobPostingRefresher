@@ -86,3 +86,6 @@ jobs/**
 # Rigorflow Files
 .claude/
 .gfdoc/
+
+# Local Dev Stuff
+dev/
