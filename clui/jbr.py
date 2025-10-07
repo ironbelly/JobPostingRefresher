@@ -53,6 +53,18 @@ class JobRefresherCLUI:
         self.breadcrumbs = ["Main Menu"]
         self.running = True
 
+        # Session statistics
+        self.session_stats = {
+            "jobs_created": 0,
+            "jobs_processed": 0,
+            "jobs_exported": 0,
+            "jobs_imported": 0,
+            "start_time": None
+        }
+
+        import datetime
+        self.session_stats["start_time"] = datetime.datetime.now()
+
     def clear_screen(self):
         """Clear terminal screen"""
         os.system('clear' if os.name != 'nt' else 'cls')
@@ -298,6 +310,7 @@ class JobRefresherCLUI:
         result = self.job_manager.create_job(job_id, title, company, raw_data, metadata)
 
         if result["success"]:
+            self.session_stats["jobs_created"] += 1
             self.show_message(f"\n✅ Job '{job_id}' created successfully!", "success")
         else:
             self.show_message(f"\n❌ Error: {result['error']}", "error")
@@ -476,8 +489,11 @@ class JobRefresherCLUI:
 
             options = [
                 ("1", "Process Single Job"),
-                ("2", "View Processing Results"),
-                ("3", "Export Job"),
+                ("2", "Batch Process Jobs"),
+                ("3", "View Processing Results"),
+                ("4", "Compare Job Versions"),
+                ("5", "Performance Dashboard"),
+                ("6", "Export Job"),
                 ("b", "Back to Main Menu")
             ]
 
@@ -488,8 +504,14 @@ class JobRefresherCLUI:
             if choice == "1":
                 self.process_single_job()
             elif choice == "2":
-                self.view_processing_results()
+                self.batch_process_jobs()
             elif choice == "3":
+                self.view_processing_results()
+            elif choice == "4":
+                self.compare_versions_menu()
+            elif choice == "5":
+                self.performance_dashboard()
+            elif choice == "6":
                 self.export_job()
             elif choice == "b":
                 break
@@ -534,6 +556,9 @@ class JobRefresherCLUI:
                 # Save processed data
                 self.job_manager.save_processed_job(job_id, result, create_version=True)
 
+                # Update session stats
+                self.session_stats["jobs_processed"] += 1
+
                 self.show_message("\n✅ Job processed successfully!", "success")
                 self.show_message(f"Overall Quality Score: {result['metrics']['overall_quality']:.2f}", "info")
                 self.show_message(f"Precision Score: {result['metrics']['precision_score']:.2f}", "info")
@@ -543,6 +568,253 @@ class JobRefresherCLUI:
 
         except Exception as e:
             self.show_message(f"\n❌ Error during processing: {str(e)}", "error")
+
+        self.pause()
+
+    def batch_process_jobs(self):
+        """Process multiple jobs in batch"""
+        self.clear_screen()
+        self.display_header()
+        self.breadcrumbs = ["Main Menu", "Job Processing", "Batch Process"]
+        self.display_breadcrumbs()
+
+        self.show_message("\n=== Batch Process Jobs ===\n", "info")
+
+        # Get filter criteria
+        status = self.get_input("Filter by status (raw/all)", "raw")
+        company = self.get_input("Filter by company (leave empty for all)", "")
+
+        # Build filter
+        filter_by = {}
+        if status != "all":
+            filter_by["status"] = status
+        if company:
+            filter_by["company"] = company
+
+        # Get jobs
+        jobs = self.job_manager.list_jobs(filter_by if filter_by else None)
+
+        if not jobs:
+            self.show_message("No jobs found matching criteria", "warning")
+            self.pause()
+            return
+
+        self.show_message(f"\nFound {len(jobs)} job(s) to process", "info")
+
+        if not self.get_confirmation(f"Process all {len(jobs)} job(s)?"):
+            self.show_message("Batch processing cancelled", "info")
+            self.pause()
+            return
+
+        # Process jobs
+        self.show_message("\n🔄 Processing jobs...\n", "info")
+
+        processed = 0
+        failed = 0
+
+        for i, job in enumerate(jobs, 1):
+            job_id = job["job_id"]
+            self.show_message(f"[{i}/{len(jobs)}] Processing {job_id}...", "info")
+
+            try:
+                # Get full job data
+                job_data = self.job_manager.get_job_data(job_id)
+
+                if not job_data["success"]:
+                    self.show_message(f"  ❌ Failed to load job: {job_data['error']}", "error")
+                    failed += 1
+                    continue
+
+                # Process through engine
+                result = self.pd_smis_engine.process_job({
+                    "job_id": job_id,
+                    "title": job_data["metadata"]["title"],
+                    "company": job_data["metadata"]["company"],
+                    "raw_content": job_data["raw_content"]
+                })
+
+                if result["success"]:
+                    # Save processed data
+                    self.job_manager.save_processed_job(job_id, result, create_version=True)
+                    self.show_message(f"  ✅ Completed (Quality: {result['metrics']['overall_quality']:.2f})", "success")
+                    processed += 1
+                    self.session_stats["jobs_processed"] += 1
+                else:
+                    self.show_message(f"  ❌ Processing failed", "error")
+                    failed += 1
+
+            except Exception as e:
+                self.show_message(f"  ❌ Error: {str(e)}", "error")
+                failed += 1
+
+        # Summary
+        self.show_message(f"\n=== Batch Processing Complete ===", "info")
+        self.show_message(f"Processed: {processed}", "success")
+        self.show_message(f"Failed: {failed}", "error" if failed > 0 else "info")
+
+        self.pause()
+
+    def compare_versions_menu(self):
+        """Compare different versions of a job"""
+        self.clear_screen()
+        self.display_header()
+        self.breadcrumbs = ["Main Menu", "Job Processing", "Compare Versions"]
+        self.display_breadcrumbs()
+
+        job_id = self.get_input("\nEnter Job ID")
+
+        if not job_id:
+            self.show_message("Job ID is required", "error")
+            self.pause()
+            return
+
+        # Get job data
+        job_data = self.job_manager.get_job_data(job_id)
+
+        if not job_data["success"]:
+            self.show_message(f"Error: {job_data['error']}", "error")
+            self.pause()
+            return
+
+        versions = job_data["metadata"].get("versions", [])
+
+        if len(versions) < 2:
+            self.show_message(f"Job has {len(versions)} version(s). Need at least 2 for comparison.", "warning")
+            self.pause()
+            return
+
+        self.show_message(f"\nAvailable versions: {', '.join(versions)}", "info")
+
+        # Display version comparison
+        if RICH_AVAILABLE:
+            from rich.table import Table
+
+            table = Table(title=f"Version Comparison - {job_id}")
+            table.add_column("Metric", style="cyan")
+
+            for version_id in versions:
+                table.add_column(version_id, style="white")
+
+            # Load all versions
+            version_data = {}
+            for version_id in versions:
+                version_file = Path(f"user_data/jobs/{job_id}/versions/{version_id}.json")
+                if version_file.exists():
+                    import json
+                    with open(version_file, 'r') as f:
+                        version_data[version_id] = json.load(f)
+
+            # Compare metrics
+            if version_data:
+                # Quality scores
+                row_data = ["Overall Quality"]
+                for version_id in versions:
+                    vdata = version_data.get(version_id, {}).get("data", {})
+                    metrics = vdata.get("metrics", {})
+                    score = metrics.get("overall_quality", 0)
+                    row_data.append(f"{score:.2f}")
+                table.add_row(*row_data)
+
+                # Precision scores
+                row_data = ["Precision Score"]
+                for version_id in versions:
+                    vdata = version_data.get(version_id, {}).get("data", {})
+                    metrics = vdata.get("metrics", {})
+                    score = metrics.get("precision_score", 0)
+                    row_data.append(f"{score:.2f}")
+                table.add_row(*row_data)
+
+                # Iterations
+                row_data = ["Iterations"]
+                for version_id in versions:
+                    vdata = version_data.get(version_id, {}).get("data", {})
+                    iterations = vdata.get("iterations", 0)
+                    row_data.append(str(iterations))
+                table.add_row(*row_data)
+
+            self.console.print(table)
+        else:
+            print("\n=== Version Comparison ===")
+            for version_id in versions:
+                print(f"\n{version_id}:")
+                version_file = Path(f"user_data/jobs/{job_id}/versions/{version_id}.json")
+                if version_file.exists():
+                    import json
+                    with open(version_file, 'r') as f:
+                        vdata = json.load(f)
+                        metrics = vdata.get("data", {}).get("metrics", {})
+                        print(f"  Quality: {metrics.get('overall_quality', 0):.2f}")
+                        print(f"  Precision: {metrics.get('precision_score', 0):.2f}")
+
+        self.pause()
+
+    def performance_dashboard(self):
+        """Display performance dashboard with metrics"""
+        self.clear_screen()
+        self.display_header()
+        self.breadcrumbs = ["Main Menu", "Job Processing", "Performance Dashboard"]
+        self.display_breadcrumbs()
+
+        # Get all jobs
+        jobs = self.job_manager.list_jobs()
+
+        # Calculate statistics
+        total_jobs = len(jobs)
+        raw_jobs = len([j for j in jobs if j.get("status") == "raw"])
+        processed_jobs = len([j for j in jobs if j.get("status") == "processed"])
+
+        # Get processing metrics
+        quality_scores = []
+        for job in jobs:
+            if job.get("status") == "processed":
+                job_data = self.job_manager.get_job_data(job["job_id"])
+                if job_data["success"] and job_data.get("latest_version"):
+                    metrics = job_data["latest_version"]["data"].get("metrics", {})
+                    quality_scores.append(metrics.get("overall_quality", 0))
+
+        avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0
+
+        # Session statistics
+        import datetime
+        if self.session_stats["start_time"]:
+            session_duration = datetime.datetime.now() - self.session_stats["start_time"]
+            session_minutes = int(session_duration.total_seconds() / 60)
+        else:
+            session_minutes = 0
+
+        if RICH_AVAILABLE:
+            from rich.panel import Panel
+            from rich.table import Table
+
+            # Metrics table
+            table = Table(title="Performance Metrics", box=box.ROUNDED)
+            table.add_column("Metric", style="cyan")
+            table.add_column("Value", style="white", justify="right")
+
+            table.add_row("Total Jobs", str(total_jobs))
+            table.add_row("Raw Jobs", str(raw_jobs))
+            table.add_row("Processed Jobs", str(processed_jobs))
+            table.add_row("Average Quality Score", f"{avg_quality:.2f}")
+            table.add_row("", "")
+            table.add_row("[bold]Session Statistics[/bold]", "")
+            table.add_row("Jobs Created", str(self.session_stats["jobs_created"]))
+            table.add_row("Jobs Processed", str(self.session_stats["jobs_processed"]))
+            table.add_row("Jobs Exported", str(self.session_stats["jobs_exported"]))
+            table.add_row("Jobs Imported", str(self.session_stats["jobs_imported"]))
+            table.add_row("Session Duration", f"{session_minutes} min")
+
+            self.console.print(table)
+        else:
+            print("\n=== Performance Dashboard ===")
+            print(f"\nTotal Jobs: {total_jobs}")
+            print(f"Raw Jobs: {raw_jobs}")
+            print(f"Processed Jobs: {processed_jobs}")
+            print(f"Average Quality Score: {avg_quality:.2f}")
+            print(f"\nSession Statistics:")
+            print(f"  Jobs Created: {self.session_stats['jobs_created']}")
+            print(f"  Jobs Processed: {self.session_stats['jobs_processed']}")
+            print(f"  Jobs Exported: {self.session_stats['jobs_exported']}")
+            print(f"  Session Duration: {session_minutes} minutes")
 
         self.pause()
 
@@ -607,6 +879,7 @@ class JobRefresherCLUI:
         result = self.job_manager.export_job(job_id, format=format_choice)
 
         if result["success"]:
+            self.session_stats["jobs_exported"] += 1
             self.show_message(f"\n✅ Job exported successfully!", "success")
             self.show_message(f"File: {result['path']}", "info")
         else:
@@ -631,8 +904,9 @@ class JobRefresherCLUI:
 
             options = [
                 ("1", "Import Job from TeamTailor"),
-                ("2", "View TeamTailor Status"),
-                ("3", "Create Sample Configuration"),
+                ("2", "Sync Metrics from TeamTailor"),
+                ("3", "View TeamTailor Status"),
+                ("4", "Create Sample Configuration"),
                 ("b", "Back to Main Menu")
             ]
 
@@ -643,8 +917,10 @@ class JobRefresherCLUI:
             if choice == "1":
                 self.import_from_teamtailor()
             elif choice == "2":
-                self.view_teamtailor_status()
+                self.sync_metrics()
             elif choice == "3":
+                self.view_teamtailor_status()
+            elif choice == "4":
                 self.create_teamtailor_config()
             elif choice == "b":
                 break
@@ -671,10 +947,80 @@ class JobRefresherCLUI:
         result = self.teamtailor_client.import_to_job_manager(job_id, self.job_manager)
 
         if result["success"]:
+            self.session_stats["jobs_imported"] += 1
             self.show_message(f"\n✅ Job imported successfully!", "success")
             self.show_message(f"Local Job ID: {result['local_job_id']}", "info")
         else:
             self.show_message(f"\n❌ Error: {result['error']}", "error")
+
+        self.pause()
+
+    def sync_metrics(self):
+        """Sync performance metrics from TeamTailor"""
+        self.clear_screen()
+        self.display_header()
+        self.breadcrumbs = ["Main Menu", "TeamTailor", "Sync Metrics"]
+        self.display_breadcrumbs()
+
+        status = self.teamtailor_client.get_status()
+        if not status["available"]:
+            self.show_message("TeamTailor API is not available", "error")
+            self.show_message(f"Reason: {status['degradation_reason']}", "warning")
+            self.pause()
+            return
+
+        # Find jobs imported from TeamTailor
+        jobs = self.job_manager.list_jobs()
+        tt_jobs = [j for j in jobs if j.get("job_id", "").startswith("tt_")]
+
+        if not tt_jobs:
+            self.show_message("No TeamTailor jobs found to sync", "warning")
+            self.pause()
+            return
+
+        self.show_message(f"\nFound {len(tt_jobs)} TeamTailor job(s) to sync", "info")
+
+        if not self.get_confirmation("Sync metrics for all jobs?"):
+            self.show_message("Sync cancelled", "info")
+            self.pause()
+            return
+
+        self.show_message("\n🔄 Syncing metrics...\n", "info")
+
+        synced = 0
+        failed = 0
+
+        for job in tt_jobs:
+            job_id = job["job_id"]
+            # Extract original TeamTailor ID (remove 'tt_' prefix)
+            tt_id = job_id[3:]
+
+            self.show_message(f"Syncing {job_id}...", "info")
+
+            try:
+                # Fetch metrics from TeamTailor
+                metrics_result = self.teamtailor_client.fetch_metrics(tt_id)
+
+                if metrics_result["success"]:
+                    # Update job metadata with metrics
+                    updates = {
+                        "notes": f"Metrics synced: Views={metrics_result.get('views', 0)}, Applications={metrics_result.get('applications', 0)}"
+                    }
+                    self.job_manager.update_metadata(job_id, updates)
+                    self.show_message(f"  ✅ Synced (Views: {metrics_result.get('views', 0)})", "success")
+                    synced += 1
+                else:
+                    self.show_message(f"  ⚠️  Metrics unavailable", "warning")
+                    failed += 1
+
+            except Exception as e:
+                self.show_message(f"  ❌ Error: {str(e)}", "error")
+                failed += 1
+
+        # Summary
+        self.show_message(f"\n=== Sync Complete ===", "info")
+        self.show_message(f"Synced: {synced}", "success")
+        self.show_message(f"Failed: {failed}", "error" if failed > 0 else "info")
 
         self.pause()
 
