@@ -1,0 +1,6 @@
+{
+  "api_key": "YOUR_API_KEY_HERE",
+  "company_id": "YOUR_COMPANY_ID_HERE",
+  "api_version": "20210218",
+  "_comment": "Copy this file to user_data/config/teamtailor_config.json and add your actual TeamTailor API credentials"
+}
