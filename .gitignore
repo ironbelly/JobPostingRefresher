@@ -83,9 +83,7 @@ coverage.xml
 /jobs/
 jobs/**
 
-# Rigorflow Files
-.claude/
-.gfdoc/
-
 # Local Dev Stuff
-dev/
+dev
+.gfdoc 
+.claude
